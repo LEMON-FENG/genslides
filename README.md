@@ -2,7 +2,11 @@
 
 Craft **one polished, on-brand presentation slide at a time** and deliver it as a standalone `.pptx` that merges into a master deck by hand. The defining idea: **decide visuals on a fast HTML mockup first, sign it off, then faithfully reproduce it in pptxgenjs** — gradients and brand colors stay *editable* fills, not baked images.
 
-Ships with **four built-in Big-Four consulting styles** — **KPMG** (default) · **Deloitte** · **PwC** · **EY** — switchable via `config/theme.json`, and configurable to any brand.
+![A genslides page — indirect-method cash-flow methodology (illustrative)](docs/example.jpg)
+
+Ships with **four built-in Big-Four consulting styles** — **KPMG** (default) · **Deloitte** · **PwC** · **EY** — switchable via `config/theme.json`, and configurable to any brand. Same page, four themes:
+
+![Four built-in styles — KPMG · Deloitte · PwC · EY](docs/themes.jpg)
 
 This is both a **Claude Code skill** and a **Claude Code plugin** (same folder).
 
