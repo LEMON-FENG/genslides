@@ -29,7 +29,10 @@ $chrome = FirstExisting @(
   "C:\Program Files (x86)\Google\Chrome\Application\chrome.exe",
   (OnPath "chrome.exe"))
 $pdftoppm = FirstExisting @((OnPath "pdftoppm.exe"), "$env:USERPROFILE\scoop\shims\pdftoppm.exe")
+# prefer the official pptx skill's validate.py (stronger XSD) if present; else fall back to the
+# bundled self-contained check_pptx.py (MIT, no external dependency).
 $validate = FirstExisting @("$env:USERPROFILE\.claude\skills\pptx\scripts\office\validate.py", "/mnt/skills/public/pptx/scripts/office/validate.py")
+if (-not $validate) { $validate = Join-Path $root "scripts\check_pptx.py" }
 $unpack   = FirstExisting @("$env:USERPROFILE\.claude\skills\pptx\scripts\office\unpack.py",   "/mnt/skills/public/pptx/scripts/office/unpack.py")
 
 # 3) write env.json
@@ -52,7 +55,7 @@ $missing = @()
 foreach ($k in "soffice","chrome","pdftoppm","validatePy") { if (-not $env[$k]) { $missing += $k } }
 if ($missing.Count) {
   Write-Host ("MISSING: " + ($missing -join ", ")) -ForegroundColor Yellow
-  Write-Host "  install the tool(s) and edit config/env.json. validatePy/unpackPy come from the official 'pptx' skill." -ForegroundColor Yellow
+  Write-Host "  install the tool(s) and edit config/env.json. (Validation needs nothing extra — it falls back to the bundled scripts/check_pptx.py; the official 'pptx' skill is optional for stronger XSD.)" -ForegroundColor Yellow
 }
 
 # 5) selftest

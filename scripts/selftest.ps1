@@ -25,9 +25,11 @@ Step "1 generate (gen_template)" (Test-Path $pptx) ($g.Trim() -split "`n" | Sele
 $pp = & python (Join-Path $here "postprocess.py") $pptx 2>&1 | Out-String
 Step "2 postprocess" ($pp -match "DONE") (($pp -split "`n" | Where-Object {$_ -match "gradients|fonts"}) -join " | ")
 
-# 3 validate (the real gate)
-$v = & python $envc.validatePy $pptx 2>&1 | Out-String
-Step "3 validate.py (gate)" ($v -match "All validations PASSED") "All validations PASSED!"
+# 3 validate (the real gate) — use configured validator, else bundled self-contained check_pptx.py
+$validator = $envc.validatePy
+if (-not $validator -or -not (Test-Path $validator)) { $validator = Join-Path $here "check_pptx.py" }
+$v = & python $validator $pptx 2>&1 | Out-String
+Step "3 validate (gate)" ($v -match "All validations PASSED") ("via " + (Split-Path $validator -Leaf))
 
 # 4 render pptx -> jpg
 $img = Join-Path $work "selftest-1.jpg"

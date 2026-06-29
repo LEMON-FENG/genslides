@@ -54,7 +54,7 @@ Before touching anything, ask the user: is this page **① optimize-current** (k
 - Replace gradient placeholder colors with `<a:gradFill>` (config-driven from `theme.gradients`).
 
 **Phase 5 — 校验 · 自查 🔒🔒**
-- 🔒 `validate.py` must print **"All validations PASSED!"** (run again after any gradient post-process).
+- 🔒 the validator must print **"All validations PASSED!"** — bundled `scripts/check_pptx.py` (self-contained, catches the PowerPoint "needs-repair" causes), or the `pptx` skill's `validate.py` if installed (stronger XSD). Run again after any gradient post-process.
 - Render to image; then run a **fresh-eyes QA subagent** with `reference/qa-prompt.md` (this is the gate — objective defect hunt). Fix → re-render → repeat until a clean pass. Walk `reference/self-check.md`.
 - 💡 *Optional (only if the page is clean-but-flat):* offer a 3-dim **polish-grade review** (视觉层级 / 品牌口径一致性 / 细节执行) — see `reference/optional-passes.md` §A. It's a ceiling-raiser, **not a gate**; mention it's available, don't run by default.
 
@@ -74,7 +74,7 @@ Per-page verification is the gates themselves: every delivered page must show **
 - `config/env.json` — tool paths (node modules, soffice, chrome, pdftoppm, validate/unpack). Edit per machine.
 - `reference/` — `workflow.md`, `house-style.md`, `title-spec.md`, `gradient-landing.md`, `pitfalls.md`, `self-check.md`, `qa-prompt.md`, `optional-passes.md` (opt-in extras: polish-grade review + parallel variants — hint-only, not gates).
 - `templates/` — `visualizer.html` (HTML mockup skeleton), `gen_template.js` (pptxgenjs house template).
-- `scripts/` — `setup.ps1`, `selftest.ps1`, `shoot.ps1` (HTML→PNG), `render.ps1` (pptx→images), `postprocess.py`, `sample_color.js`, `extract_deck_style.py`, `capture_palette.js` (opt-in brand capture).
+- `scripts/` — `setup.ps1`, `selftest.ps1`, `shoot.ps1` (HTML→PNG), `render.ps1` (pptx→images), `postprocess.py`, `check_pptx.py` (bundled MIT validator — the gate), `sample_color.js`, `extract_deck_style.py`, `capture_palette.js` (opt-in brand capture).
 
 ## Hard rules (red lines)
 - Never automate PowerPoint (no COM); only ever write new/standalone files.

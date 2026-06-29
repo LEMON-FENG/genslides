@@ -8,8 +8,8 @@ This is both a **Claude Code skill** and a **Claude Code plugin** (same folder).
 
 ## Prerequisites
 - **Node.js**, **Python 3**, **LibreOffice** (`soffice`), **Google Chrome**, **poppler** (`pdftoppm`)
-- The official **`pptx` skill** installed (genslides shells out to its `validate.py` / `unpack.py`)
 - Node deps are installed locally by `setup.ps1`: `pptxgenjs react react-dom react-icons sharp`
+- Validation is **self-contained** — `scripts/check_pptx.py` (MIT) catches the PowerPoint-"needs-repair" failure modes with no extra dependency. *Optional:* if the official **`pptx` skill** is installed, `setup.ps1` uses its `validate.py` for stronger full-XSD checking instead.
 
 ## Install
 
@@ -49,7 +49,7 @@ The plugin install + `/genslides` auto-discovery are Claude-Code-specific, but t
   ```
   node templates/gen_template.js out.pptx        # generate (edit a copy per page)
   python scripts/postprocess.py out.pptx         # fonts + notesMasterIdLst + strip dir entries (+ gradients)
-  python <pptx-skill>/scripts/office/validate.py out.pptx   # must print "All validations PASSED!"
+  python scripts/check_pptx.py out.pptx          # built-in MIT validator — must print "All validations PASSED!"
   pwsh scripts/render.ps1 out.pptx               # render to images to eyeball
   ```
 - **Output** — the produced `.pptx` opens and edits in any PowerPoint / Keynote / WPS, with **no dependency** on this repo. A colleague who touches no agent at all can just receive the finished `.pptx`.
