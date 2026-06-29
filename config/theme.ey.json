@@ -1,0 +1,147 @@
+{
+  "_about": "EY preset for genslides. Activate via env GENSLIDES_THEME=config/theme.ey.json. The default config/theme.json is KPMG. One of four built-in Big-Four consulting styles.",
+  "brand": {
+    "name": "EY",
+    "standard": "EY house style (built-in preset).",
+    "note": "Default = KPMG brand. Fully configurable: recolor/rename here to target any brand. Downstream reads brand.name + palette; nothing hardcodes a specific brand."
+  },
+  "palette": {
+    "primary": "2E2E38",
+    "accent": "595964",
+    "accentAlt": "FFE600",
+    "paleBg": "FFF6CC",
+    "tileBg": "FFF6CC",
+    "cardBg": "FCFBF4",
+    "border": "E6E2C8",
+    "border2": "EFECDC",
+    "positive": "2E7D46",
+    "negative": "C00000",
+    "neutral": "8A8F98",
+    "ink": "333333",
+    "gray66": "666666",
+    "gray88": "888888",
+    "white": "FFFFFF",
+    "_roles": {
+      "primary": "深主色 = KPMG navy 00338D — 标题(可选)、深色块/基座、强调",
+      "accent": "亮主色 = KPMG blue 0091DA — 副标题、箭头、图标圆、强调底",
+      "accentAlt": "次亮色/青 — 渐变第二色",
+      "paleBg": "浅底 — chips、强调底",
+      "cardBg": "卡片灰底",
+      "border/border2": "卡片描边/次级描边",
+      "positive/negative/neutral": "加(+)绿 / 减(-)红 / 双向(±)与空值(—)灰",
+      "ink/gray66/gray88": "正文 / 次要 / 脚注"
+    }
+  },
+  "forbidden": {
+    "gold": "EAAA00",
+    "_note": "禁用金色系；禁页脚总结条。"
+  },
+  "fonts": {
+    "latin": "Arial",
+    "eastasian": "微软雅黑",
+    "_note": "pptxgenjs 的 fontFace 会把 latin/ea/cs 三槽全填同一字体。postprocess.py 把 latin/cs 改成 latin 值、保 ea。动手前先用 extract_deck_style.js 看目标 deck 实际字体再覆盖此处。"
+  },
+  "title": {
+    "level1": {
+      "color": "2E2E38",
+      "size": 21,
+      "bold": true
+    },
+    "level2": {
+      "color": "595964",
+      "size": 11,
+      "bold": true
+    },
+    "pattern": "一级「主题：阐述」冒号式 + 二级一句正式商务；封面/目录/分章页保持原样。",
+    "_alt_template": {
+      "note": "某些 deck 的占位符正文页用黑标题 + 0070C0 副标题(18pt)。若要匹配那批页，用 extract_deck_style.js 抽取后把 level1/level2 覆盖为 {color:'000000'} / {color:'0070C0',size:18}。先确认要统一到哪一套再选。",
+      "level1_alt": {
+        "color": "000000",
+        "size": 22,
+        "bold": true
+      },
+      "level2_alt": {
+        "color": "0070C0",
+        "size": 18,
+        "bold": true
+      }
+    }
+  },
+  "layout": {
+    "widthIn": 13.333,
+    "heightIn": 7.5,
+    "marginIn": 0.4,
+    "html": {
+      "widthPx": 1280,
+      "heightPx": 720,
+      "marginPx": 42
+    }
+  },
+  "gradients": {
+    "_note": "只有小 accent/tile/徽标/顶条上渐变；大面积(箭身/基座)一律纯色。每个渐变点在 gen.js 用唯一占位色(EE00xx)，postprocess.py 按此表替换为 gradFill。stops=[起,止]，angle 取下表键名。",
+    "angles": {
+      "horizontal": 0,
+      "vertical": 5400000,
+      "diag45": 2700000,
+      "diag135": 8100000
+    },
+    "placeholders": {
+      "EE0001": {
+        "stops": [
+          "FFE600",
+          "FFB600"
+        ],
+        "angle": "horizontal"
+      },
+      "EE0002": {
+        "stops": [
+          "2E2E38",
+          "595964"
+        ],
+        "angle": "horizontal"
+      },
+      "EE0003": {
+        "stops": [
+          "FFE600",
+          "FFB600"
+        ],
+        "angle": "diag45"
+      },
+      "EE0004": {
+        "stops": [
+          "2E2E38",
+          "595964"
+        ],
+        "angle": "diag45"
+      },
+      "EE0005": {
+        "stops": [
+          "FFE600",
+          "FFB600"
+        ],
+        "angle": "vertical"
+      },
+      "EE0006": {
+        "stops": [
+          "2E2E38",
+          "595964"
+        ],
+        "angle": "vertical"
+      },
+      "EE0007": {
+        "stops": [
+          "FFE600",
+          "FFB600"
+        ],
+        "angle": "vertical"
+      },
+      "EE0008": {
+        "stops": [
+          "2E2E38",
+          "595964"
+        ],
+        "angle": "diag45"
+      }
+    }
+  }
+}

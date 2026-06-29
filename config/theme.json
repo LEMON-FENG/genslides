@@ -1,5 +1,5 @@
 {
-  "_about": "Single source of truth for the brand style. Default standard = KPMG. Edit this to re-skin every slide. gen_template.js and postprocess.py read from this file. Keep END-CLIENT names out (engagement facts live in the working folder, not here).",
+  "_about": "Default active theme = KPMG (one of four built-in Big-Four styles; the others are theme.deloitte.json / theme.pwc.json / theme.ey.json, activated via env GENSLIDES_THEME). Single source of truth for the active brand style; gen_template.js and postprocess.py read from this file. Keep END-CLIENT names out (engagement facts live in the working folder, not here).",
   "brand": {
     "name": "KPMG",
     "standard": "KPMG house style — navy 00338D / blue 0091DA / 微软雅黑 / titles in 「主题：阐述」colon form.",

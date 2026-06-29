@@ -1,11 +1,11 @@
 ---
 name: genslides
-description: Produce a single high-quality, on-brand presentation slide (.pptx) using an HTML-mockup-first → pptxgenjs → validate workflow. Default brand standard is the KPMG house style (navy 00338D / blue 0091DA / 微软雅黑 / 「主题：阐述」titles), fully configurable in config/theme.json. Use when asked to design, beautify, or rebuild a deck page for consulting / bid / executive decks. Composes the `pptx` and `frontend-design` skills and enforces four gates: mode-alignment, HTML direction sign-off, OOXML validation, and fresh-eyes QA. Keep end-client names out of the skill.
+description: Produce a single high-quality, on-brand presentation slide (.pptx) using an HTML-mockup-first → pptxgenjs → validate workflow. Ships with four built-in Big-Four consulting styles (KPMG by default, plus Deloitte / PwC / EY), switchable in config/theme.json and configurable to any brand. Use when asked to design, beautify, or rebuild a deck page for consulting / bid / executive decks. Composes the `pptx` and `frontend-design` skills and enforces four gates: mode-alignment, HTML direction sign-off, OOXML validation, and fresh-eyes QA. Keep end-client names out of the skill.
 ---
 
 # genslides
 
-A reusable workflow for crafting **one polished slide at a time**, then delivering it as a standalone `.pptx` the user merges into their master deck by hand. The **default brand standard is KPMG** (navy `00338D` / blue `0091DA` / 微软雅黑 / 「主题：阐述」titles); it is fully configurable to any brand via `config/theme.json`.
+A reusable workflow for crafting **one polished slide at a time**, then delivering it as a standalone `.pptx` the user merges into their master deck by hand. Ships with **four built-in Big-Four consulting styles** — **KPMG** (default) · **Deloitte** · **PwC** · **EY** — switchable via `config/theme.json` (set env `GENSLIDES_THEME=config/theme.<firm>.json`), and configurable to any brand.
 
 The defining idea: **decide the visuals on a fast HTML mockup first, sign it off, then faithfully reproduce that mockup in pptxgenjs** — never design straight in pptxgenjs. Gradients and brand colors live as *editable* fills, not baked images.
 

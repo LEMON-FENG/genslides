@@ -4,7 +4,7 @@
   "plugins": [
     {
       "name": "genslides",
-      "description": "HTML-mockup-first → pptxgenjs → validate workflow for on-brand consulting/bid slides. Default brand: KPMG, configurable.",
+      "description": "HTML-mockup-first → pptxgenjs → validate workflow for on-brand consulting/bid slides. Four built-in Big-Four styles (KPMG default · Deloitte · PwC · EY), configurable.",
       "category": "Productivity",
       "homepage": "https://github.com/LEMON-FENG/genslides",
       "source": { "source": "github", "repo": "LEMON-FENG/genslides" }
