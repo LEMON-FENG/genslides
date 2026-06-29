@@ -1,0 +1,9 @@
+{
+  "name": "genslides",
+  "description": "HTML-mockup-first → pptxgenjs → validate workflow for crafting on-brand consulting / bid / executive slides one page at a time. Default brand standard: KPMG (navy 00338D / blue 0091DA / 微软雅黑 / 「主题：阐述」titles), fully configurable in config/theme.json. Composes the pptx and frontend-design skills; enforces mode-alignment, HTML sign-off, OOXML validation, and fresh-eyes QA gates.",
+  "version": "0.1.0",
+  "author": { "name": "LEMON-FENG" },
+  "homepage": "https://github.com/LEMON-FENG/genslides",
+  "repository": "https://github.com/LEMON-FENG/genslides",
+  "license": "UNLICENSED"
+}

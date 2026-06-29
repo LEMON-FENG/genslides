@@ -1,0 +1,13 @@
+{
+  "name": "genslides-marketplace",
+  "owner": { "name": "LEMON-FENG" },
+  "plugins": [
+    {
+      "name": "genslides",
+      "description": "HTML-mockup-first → pptxgenjs → validate workflow for on-brand consulting/bid slides. Default brand: KPMG, configurable.",
+      "category": "Productivity",
+      "homepage": "https://github.com/LEMON-FENG/genslides",
+      "source": { "source": "github", "repo": "LEMON-FENG/genslides" }
+    }
+  ]
+}

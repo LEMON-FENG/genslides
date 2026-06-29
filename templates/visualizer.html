@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<!--
+  genslides · HTML mockup skeleton (1280×720, frontend-design stage)
+  Decide the visuals HERE first, sign off, THEN reproduce in gen_template.js.
+  Gradients / clip-path / inline SVG / shadows are all free in HTML.
+  :root vars mirror config/theme.json — keep them in sync.
+  For ② rebuild: duplicate this file as page_甲.html / _乙.html / _丙.html (different directions) and let the user pick.
+-->
+<html lang="zh-CN"><head><meta charset="UTF-8"><style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --primary:#00338D; --accent:#0091DA; --accentAlt:#00A0E3;
+  --pale:#E3F4FA; --tile:#E3F0FA; --card:#F5F8FA;
+  --border:#D8E4EE; --border2:#E8EEF4;
+  --pos:#2E7D46; --neg:#C00000; --neu:#8A8F98;
+  --ink:#333; --g66:#666; --g88:#888;
+}
+html,body{width:1280px;height:720px;}
+body{font-family:"微软雅黑","Microsoft YaHei",Arial,sans-serif;background:#fff;color:var(--ink);position:relative;overflow:hidden;}
+.slide{position:absolute;inset:0;padding:18px 42px;}
+
+/* title block — sizes/colors mirror theme.title (level1 navy / level2 accent) */
+.title{font-size:24px;font-weight:700;color:var(--primary);line-height:1.12;}
+.subtitle{font-size:13px;font-weight:700;color:var(--accent);margin-top:7px;line-height:1.45;max-width:1192px;}
+
+/* example house components */
+.stage{position:absolute;left:42px;right:42px;top:104px;bottom:96px;}
+.card{background:#fff;border:.75px solid var(--border);border-radius:14px;box-shadow:0 7px 18px rgba(0,42,110,.11);overflow:hidden;}
+.card .hd{height:44px;background:var(--accent);color:#fff;display:flex;align-items:center;gap:9px;padding:0 14px;font-size:13px;font-weight:700;}
+.tile{width:50px;height:50px;border-radius:14px;display:flex;align-items:center;justify-content:center;
+  background:linear-gradient(150deg,#0a4cad,#002a6e);box-shadow:0 5px 11px rgba(0,42,110,.24);} /* GRADIENT */
+.chip{display:inline-block;background:#fff;border:.75px solid var(--border);border-radius:13px;padding:4px 12px;font-size:10.5px;font-weight:600;color:#1d3a66;}
+.chip.key{background:var(--primary);color:#fff;border:none;}
+
+/* two-tone arrow via clip-path (reproduce in pptx as a single homePlate + accent strip) */
+.arrow{position:relative;height:64px;background:#E5EFFA;display:flex;align-items:center;padding:0 60px 0 24px;
+  clip-path:polygon(0 0, calc(100% - 36px) 0, 100% 50%, calc(100% - 36px) 100%, 0 100%);
+  filter:drop-shadow(0 6px 11px rgba(0,42,110,.17));font-weight:700;color:var(--primary);}
+.arrow .acc{position:absolute;left:0;top:0;bottom:0;width:7px;background:linear-gradient(180deg,#1f78c8,#5AA7E0);} /* GRADIENT */
+
+/* base rail — solid only (large area) */
+.rail{position:absolute;left:42px;right:42px;bottom:30px;height:66px;background:var(--primary);border-radius:13px;
+  display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;box-shadow:0 6px 14px rgba(0,42,110,.24);}
+</style></head><body>
+<div class="slide">
+  <div class="title">主题：阐述（一级主标题 · 冒号式）</div>
+  <div class="subtitle">二级副标题：一句正式商务、单段，说明本页的做法与结果。</div>
+
+  <div class="stage">
+    <!-- replace this scaffold with the real page layout -->
+    <div class="card" style="position:absolute;left:0;top:0;width:340px;height:150px;">
+      <div class="hd"><span style="width:18px;height:18px;background:#fff2;border-radius:4px;"></span>卡片标题</div>
+      <div style="padding:10px 14px;font-size:11.5px;color:var(--g66);line-height:1.5;">卡片正文示例。</div>
+    </div>
+    <div class="tile" style="position:absolute;left:380px;top:10px;"></div>
+    <div style="position:absolute;left:0;top:170px;">
+      <span class="chip">示例标签 A</span>
+      <span class="chip">示例标签 B</span>
+      <span class="chip key">关键标签</span>
+    </div>
+    <div class="arrow" style="position:absolute;left:0;top:220px;width:520px;">
+      <span class="acc"></span>单个 homePlate（实色）+ 渐变 accent 条
+    </div>
+  </div>
+
+  <div class="rail">底部基座：大面积纯色，不上渐变</div>
+</div>
+</body></html>
