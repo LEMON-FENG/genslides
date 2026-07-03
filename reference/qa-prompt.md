@@ -1,6 +1,12 @@
 # Fresh-eyes QA subagent prompt (template)
 
-Spawn a subagent (general-purpose) on the rendered image. You've been staring at the code — you'll see what you expect, not what's there. Fill the `{...}` and paste.
+You've been staring at the code — you'll see what you expect, not what's there. So the QA pass must run with fresh eyes, in this order of preference:
+
+1. **Claude Code with the genslides agents installed** (`setup.py` copies `agents/` → `~/.claude/agents/`): spawn subagent type **`slide-qa`** with just the image path + the intended-content paragraph — the reviewer behavior is baked into the agent definition.
+2. **Any harness with generic subagents**: spawn a general-purpose subagent with the full template below.
+3. **No subagent capability at all**: run the template below yourself in a *fresh turn* — first re-read the rendered image without looking at the generator code, and hold yourself to "assume there ARE issues".
+
+Fill the `{...}` and paste (routes 2–3):
 
 ---
 

@@ -39,7 +39,7 @@
   "fonts": {
     "latin": "Arial",
     "eastasian": "微软雅黑",
-    "_note": "pptxgenjs 的 fontFace 会把 latin/ea/cs 三槽全填同一字体。postprocess.py 把 latin/cs 改成 latin 值、保 ea。动手前先用 extract_deck_style.js 看目标 deck 实际字体再覆盖此处。"
+    "_note": "pptxgenjs 的 fontFace 会把 latin/ea/cs 三槽全填同一字体。postprocess.py 把 latin/cs 改成 latin 值、保 ea。动手前先用 extract_deck_style.py 看目标 deck 实际字体再覆盖此处。"
   },
   "title": {
     "level1": { "color": "00338D", "size": 21, "bold": true },

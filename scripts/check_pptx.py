@@ -9,10 +9,13 @@ validatePy at the `pptx` skill's validate.py instead (stronger, optional).
 Checks: (1) no stray zip directory entries, (2) all XML/.rels well-formed,
 (3) presentation.xml has notesMasterIdLst before sldIdLst, (4) every .rels
 target resolves, (5) every part is covered by [Content_Types].xml.
+House checks (genslides conventions): (6) no '#' inside srgbClr val (pptxgenjs
+passed a '#RRGGBB' color through), (7) no leftover EE00xx gradient placeholder
+colors (postprocess.py missed a swap), (8) WARN on forbidden gold EAAA00.
 
 Usage: python check_pptx.py <file.pptx>   → prints "All validations PASSED!" + exit 0, or errors + exit 1.
 """
-import sys, zipfile, posixpath
+import re, sys, zipfile, posixpath
 import xml.etree.ElementTree as ET
 
 
@@ -21,6 +24,7 @@ def main():
         print("usage: python check_pptx.py <file.pptx>"); sys.exit(2)
     path = sys.argv[1]
     errors = []
+    warnings = []
     z = zipfile.ZipFile(path)
     names = z.namelist()
     files = [n for n in names if not n.endswith("/")]
@@ -82,8 +86,26 @@ def main():
             ext = n.rsplit(".", 1)[-1].lower() if "." in n else ""
             if ("/" + n) not in overrides and ext not in defaults:
                 errors.append("part not covered by [Content_Types].xml: %s" % n)
+
+    # 6-8) house checks on drawing XML (genslides conventions)
+    for n in files:
+        if not (n.startswith("ppt/") and n.endswith(".xml")):
+            continue
+        t = z.read(n).decode("utf-8", "replace")
+        # 6) '#' leaked into a color value (pptxgenjs colors must be bare RRGGBB)
+        for m in set(re.findall(r'val="#[0-9A-Fa-f]{3,8}"', t)):
+            errors.append("%s: '#' inside a color value %s — pptxgenjs hex must have no '#'" % (n, m))
+        # 7) leftover gradient placeholder solid (postprocess.py missed the gradFill swap)
+        for m in sorted(set(re.findall(r'<a:srgbClr val="(EE00[0-9A-Fa-f]{2})"', t))):
+            errors.append("%s: leftover gradient placeholder %s — run postprocess.py "
+                          "(or add it to theme.json gradients.placeholders)" % (n, m))
+        # 8) forbidden gold (house red line) — warn, don't fail (other brands may differ)
+        if re.search(r'val="EAAA00"', t, re.I):
+            warnings.append("%s: gold EAAA00 present — forbidden by the default house style" % n)
     z.close()
 
+    for w in warnings:
+        print("  WARNING:", w)
     if errors:
         print("VALIDATION FAILED (%d issue%s):" % (len(errors), "" if len(errors) == 1 else "s"))
         for e in errors[:30]:

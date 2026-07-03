@@ -22,7 +22,9 @@ Why trimmed / opt-in:
 
 **Output:** each scored 0–10 with one line of reasoning, then **Keep / Fix / Quick-Wins**. Treat it as a polish TODO, not pass/fail.
 
-**Subagent prompt template:**
+**How to run:** in Claude Code with the genslides agents installed, spawn subagent type **`slide-critic`** (image path + one-line context — behavior is in the agent definition). Otherwise use the template below with a general-purpose subagent, or run it yourself in a fresh turn.
+
+**Subagent prompt template (fallback):**
 ```
 You are a senior presentation design critic. This slide already passed defect QA — do NOT hunt for bugs. Grade its DESIGN QUALITY for a high-end consulting/bid deck on three dimensions, 0–10 each, with one line of why:
   1. 视觉层级 — clear focal point? does the title/key figure dominate, or is everything the same weight?

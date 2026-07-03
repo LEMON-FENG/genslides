@@ -20,7 +20,12 @@ const sharp = require("sharp");
 const fa = require("react-icons/fa");
 
 // ---- theme (single source of truth) ----
-const THEME_PATH = process.env.GENSLIDES_THEME || path.join(__dirname, "..", "config", "theme.json");
+// precedence: --theme=<path> argv > GENSLIDES_THEME env > skill-relative default.
+// NOTE: the default only works while this file sits in the skill's templates/ dir;
+// copied per-page generators should be run via scripts/build.py (passes the theme).
+const argv = process.argv.slice(2);
+const themeArg = argv.find((a) => a.startsWith("--theme="));
+const THEME_PATH = (themeArg && themeArg.slice(8)) || process.env.GENSLIDES_THEME || path.join(__dirname, "..", "config", "theme.json");
 const T = JSON.parse(fs.readFileSync(THEME_PATH, "utf8"));
 const C = T.palette;
 const FF = T.fonts.eastasian;       // pptxgenjs fontFace; postprocess fixes latin/cs slots
@@ -111,7 +116,7 @@ function estW(s, pt) {
   s.addShape(pres.shapes.ROUNDED_RECTANGLE, { x: M, y: rY, w: CW, h: rH, rectRadius: 0.13, fill: { color: NAVY }, line: { type: "none" }, shadow: mkShadow(0.22, 12, 5) });
   s.addText("底部基座：大面积一律纯色，不上渐变", { x: M, y: rY, w: CW, h: rH, fontFace: FF, fontSize: 12, bold: true, color: WHITE, align: "center", valign: "middle", margin: 0 });
 
-  const out = process.argv[2] || "page.pptx";
+  const out = argv.find((a) => !a.startsWith("--")) || "page.pptx";
   await pres.writeFile({ fileName: out });
   console.log("WROTE", out);
 })();

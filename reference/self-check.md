@@ -15,14 +15,13 @@ Walk every box before declaring done.
 - [ ] No gold; no footer summary bar.
 - [ ] Copy is business-formal, no AI-isms/slogans, real (not invented) data, standard terms kept.
 
-## Post-process
-- [ ] Font slots fixed (latin/cs = latin font; ea = eastasian; no leftover).
-- [ ] `notesMasterIdLst` moved before `sldIdLst`.
+## Build gate 🔒
+- [ ] `python scripts/build.py gen_page.js page.pptx` → **GATE PASS** (generate → postprocess → house checks → validate → render, one atomic command).
+- [ ] Rerun after the *last* change to generator/theme — the delivered file is the one that passed.
+- [ ] Rendered image eyeballed.
 
-## Validation 🔒
-- [ ] `validate.py` → **"All validations PASSED!"** (re-run after gradient post-process).
-- [ ] Rendered to image and eyeballed.
-- [ ] **Fresh-eyes QA subagent** run (`qa-prompt.md`); issues fixed; affected slide re-verified; a full clean pass achieved.
+## Fresh-eyes QA 🔒
+- [ ] QA pass run on the render — `slide-qa` subagent in Claude Code, else the `qa-prompt.md` fallback ladder; issues fixed; affected area re-verified; a full clean pass achieved.
 
 ## Delivery
 - [ ] Standalone `.pptx` written to the working folder; the user's live deck untouched.

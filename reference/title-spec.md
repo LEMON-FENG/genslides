@@ -16,7 +16,7 @@ A deck often contains both; "unify the titles" means converging on one.
 
 Decide which the target deck should standardize on (ask if unsure), then set `title.level1/level2` accordingly. `scripts/extract_deck_style.py` reports what each page actually uses.
 
-## Extraction notes (what extract_deck_style.js looks at)
+## Extraction notes (what extract_deck_style.py looks at)
 - Title placeholder size/color usually comes from the **slide layout** `defRPr` (overrides the master `titleStyle`); content titles are commonly **black** (`schemeClr tx1`) even when the master default is navy.
 - Subtitle is typically a body placeholder (`idx` varies) whose `defRPr` carries the bold + color.
 - `theme clrScheme`: `tx1`→dk1, `tx2`→dk2, `accent1` — resolve scheme refs to real hex.

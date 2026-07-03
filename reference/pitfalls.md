@@ -24,11 +24,12 @@
 - Super-wide super-short text boxes with tiny fonts, or edge shapes with large blur shadows, can crash the LibreOffice importer (`STACK_BUFFER_OVERRUN`) without harming the actual PowerPoint file — bisect with a head-cut script to locate.
 
 ## 🔴 OOXML validation (gate before delivery)
-Run `python <validatePy> file.pptx` → must see **"All validations PASSED!"**. Known breakers:
+`python scripts/build.py gen_page.js page.pptx` chains generate→postprocess→house checks→validate→render and must end **GATE PASS** — use it instead of hand-running steps. Known breakers the chain catches:
 1. **`notesMasterIdLst` ordering** — pptxgenjs emits it after `sldIdLst`; schema requires it before. `postprocess.py` moves it after `</p:sldMasterIdLst>`.
 2. **Gradient post-process** — easy to malform; validate right after.
 3. **Font slots** — pptxgenjs fills latin/ea/cs identically; `postprocess.py` sets latin/cs→latin font, keeps ea.
-Order: **validate.py first (it opens?) → then LibreOffice render (layout)**.
+4. **Leftover `EE00xx` placeholder / `#` in hex** — `check_pptx.py` house checks fail on both; gold `EAAA00` warns.
+Order: **validate first (it opens?) → then LibreOffice render (layout)** — build.py already enforces this.
 
 ### ⚠️ "PowerPoint needs to repair" though everything validates
 pptxgenjs **4.0.x** injects **stray empty directory entries** into the .pptx zip (e.g. `_rels/`, `ppt/_rels/`, and an orphan `ppt/charts/_rels/` even with no charts). OPC packages must contain only *part* (file) entries. **PowerPoint's strict package loader rejects folder entries → "needs repair"**, while LibreOffice, python-pptx, and validate.py (XSD) all **ignore them and pass** — so the gates won't catch it. `postprocess.py` strips every entry whose name ends in `/`. Verify with: a clean package has **zero** entries ending in `/`. (This affects *any* pptxgenjs 4.0.x output, not just genslides.)

@@ -8,12 +8,13 @@ Ships with **four built-in Big-Four consulting styles** — **KPMG** (default) �
 
 ![Four built-in styles — KPMG · Deloitte · PwC · EY](docs/themes.jpg)
 
-This is both a **Claude Code skill** and a **Claude Code plugin** (same folder).
+This is a **Claude Code skill**, a **Claude Code plugin**, and (via `AGENTS.md`) usable from **any agent that reads the open Agent Skills format**.
 
 ## Prerequisites
 - **Node.js**, **Python 3**, **LibreOffice** (`soffice`), **Google Chrome**, **poppler** (`pdftoppm`)
-- Node deps are installed locally by `setup.ps1`: `pptxgenjs react react-dom react-icons sharp`
-- Validation is **self-contained** — `scripts/check_pptx.py` (MIT) catches the PowerPoint-"needs-repair" failure modes with no extra dependency. *Optional:* if the official **`pptx` skill** is installed, `setup.ps1` uses its `validate.py` for stronger full-XSD checking instead.
+- A **vision-capable** model — the QA gate reads rendered slide images.
+- Node deps are installed locally by `setup.py`: `pptxgenjs react react-dom react-icons sharp`
+- Validation is **self-contained** — `scripts/check_pptx.py` (MIT) catches the PowerPoint-"needs-repair" failure modes plus the house checks (leftover gradient placeholders, `#` in hex, gold warning). *Optional:* if the official **`pptx` skill** is installed, `setup.py` also wires its `validate.py` for stronger full-XSD checking.
 
 ## Install
 
@@ -29,55 +30,61 @@ Invoke with `/genslides`. Update later with `/plugin marketplace update genslide
 ```
 git clone https://github.com/LEMON-FENG/genslides ~/.claude/skills/genslides
 ```
-Auto-discovered at startup; invoke with `/genslides`.
+Auto-discovered at startup; invoke with `/genslides` — optionally with arguments: `/genslides ② --theme=pwc`.
 
 ### Then, on each machine (one-time)
 ```
-pwsh -NoProfile -File scripts/setup.ps1
+python scripts/setup.py          (Windows wrapper: pwsh -NoProfile -File scripts/setup.ps1)
 ```
-This installs node deps locally, **auto-detects** soffice/chrome/pdftoppm/validate.py, writes a machine-specific `config/env.json` (gitignored), and runs the self-test.
+This installs node deps locally, **auto-detects** soffice/chrome/pdftoppm/validate.py (Windows/macOS/Linux), writes a machine-specific `config/env.json` (gitignored), installs the `slide-qa` / `slide-critic` subagent definitions into `~/.claude/agents/`, and runs the self-test.
 
 ## Verify
 ```
-pwsh -NoProfile -File scripts/selftest.ps1
+python scripts/selftest.py
 ```
-Expect `RESULT: ALL PASS ✓` across 5 steps (generate → postprocess → validate.py gate → LibreOffice render → Chrome shoot).
+Expect `RESULT: ALL PASS ✓` across 6 steps (generate → postprocess → house checks → validate → LibreOffice render → Chrome shoot).
 
 ## Use
-Ask Claude to design/beautify/rebuild a slide, or run `/genslides`. The workflow (6 phases, 4 gates) is in `SKILL.md` and `reference/workflow.md`.
+Ask Claude to design/beautify/rebuild a slide, or run `/genslides [①|②] [--theme=deloitte|pwc|ey]`. The workflow (6 phases, 4 gates) is in `SKILL.md` and `reference/workflow.md`. Per page, the mechanical gate is one command:
+```
+python scripts/build.py gen_page.js page.pptx [--theme=config/theme.pwc.json]
+```
+generate → postprocess → house checks → validate → render, atomically — must end **GATE PASS**.
 
 ## Using genslides without Claude Code
-The plugin install + `/genslides` auto-discovery are Claude-Code-specific, but the substance is portable:
-- **Methodology** — `SKILL.md` + everything in `reference/` is plain Markdown. Point any AI coding agent (Cursor, Cline, Windsurf, Copilot, …) at `SKILL.md` and have it follow the workflow.
-- **Scripts** — `templates/` and `scripts/` are plain Node / Python / PowerShell; run them by hand with no agent at all:
+`AGENTS.md` at the repo root points any other agent (Codex, Cursor, Gemini CLI, Cline, …) at `SKILL.md`; the format is the open [Agent Skills](https://agentskills.io) standard. The substance is fully portable:
+- **Methodology** — `SKILL.md` + `reference/` are plain Markdown, with built-in fallbacks where Claude Code tools are named: the QA ladder in `reference/qa-prompt.md` and the design distillation `reference/design-principles.md`.
+- **Scripts** — plain Node / Python, cross-platform (the `.ps1` files are thin Windows wrappers); run them by hand with no agent at all:
   ```
-  node templates/gen_template.js out.pptx        # generate (edit a copy per page)
-  python scripts/postprocess.py out.pptx         # fonts + notesMasterIdLst + strip dir entries (+ gradients)
-  python scripts/check_pptx.py out.pptx          # built-in MIT validator — must print "All validations PASSED!"
-  pwsh scripts/render.ps1 out.pptx               # render to images to eyeball
+  python scripts/build.py templates/gen_template.js out.pptx   # the whole gate in one command
+  python scripts/shoot.py page.html                            # HTML mockup → PNG
+  python scripts/render.py out.pptx                            # pptx → JPGs to eyeball
   ```
-- **Output** — the produced `.pptx` opens and edits in any PowerPoint / Keynote / WPS, with **no dependency** on this repo. A colleague who touches no agent at all can just receive the finished `.pptx`.
-
-Only the fresh-eyes *subagent* QA step assumes an agent that can spawn a second pass; everything else is agent-agnostic.
+- **Output** — the produced `.pptx` opens and edits in any PowerPoint / Keynote / WPS, with **no dependency** on this repo.
 
 ## Configure
-- **Built-in styles** 🎨 — `config/theme.json` is **KPMG** (default). Switch to another Big-Four style by setting env `GENSLIDES_THEME` before generating:
+- **Built-in styles** 🎨 — `config/theme.json` is **KPMG** (default). Switch per build with `--theme`:
   ```
-  GENSLIDES_THEME=config/theme.deloitte.json   # Deloitte (black + green)
-  GENSLIDES_THEME=config/theme.pwc.json        # PwC (charcoal + orange)
-  GENSLIDES_THEME=config/theme.ey.json         # EY (charcoal + yellow)
+  python scripts/build.py gen_page.js out.pptx --theme=config/theme.deloitte.json   # Deloitte (black + green)
+                                               --theme=config/theme.pwc.json        # PwC (charcoal + orange)
+                                               --theme=config/theme.ey.json         # EY (charcoal + yellow)
   ```
-  Edit any of them, or add `config/theme.<brand>.json`, to re-skin to any brand (see `reference/optional-passes.md` §C for auto-capturing a brand's palette).
-- `config/env.json` — per-machine tool paths (generated by `setup.ps1`; never committed).
+  (`GENSLIDES_THEME` env and `node gen.js --theme=` also work.) Edit any theme, or add `config/theme.<brand>.json`, to re-skin to any brand (see `reference/optional-passes.md` §C for auto-capturing a brand's palette).
+- `config/env.json` — per-machine tool paths (generated by `setup.py`; never committed).
 
 ## Layout
 ```
-SKILL.md                 orchestrator (workflow + gates)
+SKILL.md                 orchestrator (workflow + gates + arguments)
+AGENTS.md                bridge for non-Claude-Code agents
 .claude-plugin/          plugin.json + marketplace.json (for plugin distribution)
-config/                  theme.json (committed) · env.json (per-machine, gitignored) · env.example.json
-reference/               workflow / house-style / title-spec / gradient-landing / pitfalls / self-check / qa-prompt
+agents/                  slide-qa.md (QA gate) · slide-critic.md (polish pass) — installed by setup.py
+config/                  theme.json + theme.{deloitte,pwc,ey}.json (committed) · env.json (per-machine, gitignored)
+reference/               workflow / house-style / title-spec / gradient-landing / pitfalls / self-check /
+                         qa-prompt / design-principles / optional-passes
 templates/               visualizer.html (HTML mockup) · gen_template.js (pptxgenjs house template)
-scripts/                 setup.ps1 · selftest.ps1 · shoot.ps1 · render.ps1 · postprocess.py · sample_color.js · extract_deck_style.py
+scripts/                 Python canonical: setup.py · selftest.py · build.py ⭐ · shoot.py · render.py ·
+                         postprocess.py · check_pptx.py · extract_deck_style.py
+                         Node helpers: sample_color.js · capture_palette.js      (.ps1 = Windows wrappers)
 ```
 
 ## Re-brand / fork
