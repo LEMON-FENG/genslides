@@ -11,4 +11,4 @@ This repository is an **agent skill** (Agent Skills format, agentskills.io). To 
    - `frontend-design` skill → use `reference/design-principles.md`.
 5. Requirements: Node, Python 3, LibreOffice, Chrome, poppler — and a **vision-capable** model (the QA gate reads rendered images).
 
-Never automate PowerPoint; only write new standalone `.pptx` files. Keep end-client names out of this repo.
+PowerPoint automation is permitted for compatibility QA on unique temporary copies using `scripts/powerpoint_check.py`. Do not overwrite source files, change global Office settings, quit the user's application, or close existing user documents. Prefer native QA when available; XML/LibreOffice success does not prove PowerPoint compatibility. Keep end-client names out of this repo.

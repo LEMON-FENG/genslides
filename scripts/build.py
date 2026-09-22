@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
 """
 genslides · one-shot build gate (cross-platform).
-Chains generate -> postprocess -> validate (house + configured) -> render as ONE
+Chains generate -> postprocess/theme isolation -> PNG normalization -> validate -> render as ONE
 atomic command: any step failing exits nonzero. This is the machine-checkable 🔒 —
 a page ships only if this prints GATE PASS.
 
-Usage: python build.py <gen_page.js> [out.pptx] [--theme=config/theme.<brand>.json] [--no-render]
+Usage: python build.py <gen_page.js> [out.pptx] [--theme=<theme.json>] [--powerpoint=auto|required|off] [--no-render]
 
 Steps:
   1 generate     node <gen_page.js> <out.pptx>       (NODE_PATH + GENSLIDES_THEME set)
@@ -13,7 +13,8 @@ Steps:
   3 house checks bundled check_pptx.py (PowerPoint "needs repair" causes, leftover
                  EE00xx placeholders, '#' in hex)
   4 validate     configured env.json validatePy, if present and different (full XSD)
-  5 render       LibreOffice -> JPG(s), paths printed for eyeballing / fresh-eyes QA
+  5 render       PowerPoint temporary-copy QA when available, otherwise alternate
+                 render explicitly marked PowerPoint NOT VERIFIED
 """
 import os
 import sys
@@ -36,16 +37,23 @@ def main():
     args = sys.argv[1:]
     theme = None
     render = True
+    powerpoint = 'auto'
     pos = []
     for a in args:
         if a.startswith("--theme="):
             theme = a.split("=", 1)[1]
         elif a == "--no-render":
             render = False
+        elif a.startswith('--powerpoint='):
+            powerpoint = a.split('=', 1)[1]
         else:
             pos.append(a)
     if not pos:
         sys.exit("usage: python build.py <gen_page.js> [out.pptx] [--theme=<theme.json>] [--no-render]")
+    if powerpoint not in ('auto', 'required', 'off'):
+        sys.exit('--powerpoint must be auto, required, or off')
+    if not render and powerpoint == 'required':
+        sys.exit('--no-render conflicts with --powerpoint=required')
 
     gen_js = os.path.abspath(pos[0])
     if not os.path.exists(gen_js):
@@ -81,6 +89,10 @@ def main():
         return finish(False)
 
     # 3 house checks (bundled — always run; catches what XSD tools tolerate)
+    rc, log = run([sys.executable, os.path.join(HERE, 'normalize_png.py'), out, '--in-place'])
+    if not step('2b PNG normalize', rc == 0, tail(log, 2)):
+        return finish(False)
+
     house = os.path.join(HERE, "check_pptx.py")
     rc, log = run([sys.executable, house, out])
     ok &= step("3 house checks", rc == 0 and "All validations PASSED" in log, tail(log, 6))
@@ -96,23 +108,43 @@ def main():
     if not ok:
         return finish(False)
 
-    # 5 render (for eyeballing + the fresh-eyes QA pass)
-    if render:
+    # Prefer native rendering when available. Never mask an actual Office error
+    # by falling back to a more tolerant renderer.
+    native_pass = False
+    if render and powerpoint != 'off':
+        rc, log = run([sys.executable, os.path.join(HERE, 'powerpoint_check.py'), out])
+        if rc == 0:
+            native_pass = True
+            step('5 PowerPoint', True, log.strip())
+        elif rc == 3 and powerpoint == 'auto':
+            print('5 PowerPoint   [UNVERIFIED] '+log.strip())
+        else:
+            step('5 PowerPoint', False, log.strip())
+            return finish(False)
+    elif render:
+        print('5 PowerPoint   [UNVERIFIED] explicitly disabled')
+
+    # Alternate renderer is a layout preview, not PowerPoint acceptance.
+    if render and not native_pass:
         rc, log = run([sys.executable, os.path.join(HERE, "render.py"), out])
         jpgs = [l for l in log.strip().splitlines() if l.strip().lower().endswith(".jpg")]
         ok &= step("5 render", rc == 0 and bool(jpgs), jpgs[0] if jpgs else tail(log))
         for j in jpgs[1:]:
             print(" " * 22 + j)
-    else:
+    elif not render:
         print("%-14s [SKIP] --no-render" % "5 render")
 
-    return finish(ok, out)
+    if ok and not render:
+        print('STATIC PASS: rendering skipped; not a delivery gate')
+        return 0
+    return finish(ok, out, native_pass)
 
 
-def finish(ok, out=None):
+def finish(ok, out=None, native_pass=False):
     print()
     if ok:
-        print("GATE PASS  ✓  %s" % (out or ""))
+        status = 'PowerPoint VERIFIED' if native_pass else 'alternate render; PowerPoint NOT VERIFIED'
+        print("GATE PASS  ✓  %s [%s]" % (out or "", status))
         sys.exit(0)
     print("GATE FAIL  ✗  fix and rerun — do NOT deliver this page")
     sys.exit(1)

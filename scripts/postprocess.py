@@ -7,6 +7,7 @@ Usage:  python postprocess.py <file.pptx> [theme.json]
 Then always re-run validate.py.
 """
 import sys, os, re, json, zipfile, shutil
+from theme_compatibility import isolate_notes_themes
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 
@@ -75,6 +76,12 @@ def main():
                 p2 = p2[:ins] + block + p2[ins:]
                 data[pn] = p2.encode("utf-8")
                 print("moved notesMasterIdLst before sldIdLst")
+
+    # Keep notes-master themes independent when ordering exposes Office's loader
+    # incompatibility with a theme shared by slide and notes masters.
+    isolated = isolate_notes_themes(data)
+    names.extend(n for n in data if n not in names)
+    print('isolated shared notes themes:', len(isolated))
 
     # strip stray directory entries (pptxgenjs 4.0.x injects empty folders like
     # ppt/charts/_rels/ → PowerPoint's strict OPC loader rejects them as "needs repair";
