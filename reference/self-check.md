@@ -6,6 +6,7 @@ Walk every box before declaring done.
 - [ ] Phase 0: asked the user ①optimize-current vs ②rebuild — didn't assume.
 - [ ] Phase 2: HTML mockup screenshot shown; for ②, direction variants offered and one chosen.
 - [ ] Phase 1: if domain facts involved, verified against authoritative sources; listed standard vs. extended items.
+- [ ] New technique: one page landed and verified by the user before the pattern was batched.
 
 ## Build
 - [ ] Colors/fonts/title sizes come from `config/theme.json`.
@@ -14,6 +15,8 @@ Walk every box before declaring done.
 - [ ] Gradients are placeholder→gradFill (editable), not images/background. Large areas solid.
 - [ ] No gold; no footer summary bar.
 - [ ] Copy is business-formal, no AI-isms/slogans, real (not invented) data, standard terms kept.
+- [ ] Figures decided per slide: simple diagrams are native shapes; only an irreproducible complex figure is a transparent base image with native icons/cards/text on top; no whole-block screenshots, no HTML→pptx auto-translation.
+- [ ] Positions come from measured HTML boxes (probe JSON), not guessed offsets.
 
 ## Build gate 🔒
 - [ ] `python scripts/build.py gen_page.js page.pptx` → **GATE PASS** (generate → postprocess → house checks → validate → render, one atomic command).
@@ -26,3 +29,4 @@ Walk every box before declaring done.
 ## Delivery
 - [ ] Standalone `.pptx` written to the working folder; the user's live deck untouched.
 - [ ] `*.html` + screenshot + `gen_*.js` kept beside it as the page's source of truth.
+- [ ] Deck page replacement (only if authorized): deck re-read from disk, hand-edited version backed up, no `~$` lock present, position and hidden flag preserved.
